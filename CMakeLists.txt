@@ -31,9 +31,9 @@ add_definitions(-D_CLASS_DATA_LIST)
 add_definitions(-D_CODE_LIST_INFO)
 
 # Add source to this project's executable.
-add_executable (
+add_library(
     DexFileParser
-    DexFileParser.cpp
+    STATIC
     type/DexFile.h
     type/Leb128.cpp
     type/Leb128.h
