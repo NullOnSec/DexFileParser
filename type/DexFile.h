@@ -907,10 +907,10 @@ struct code_item
                 printf("code_item#parse - read file errr.");
                 return -1;
             }
-
+#ifdef _CODE_LIST_INFO
             printf("insns: ");
             Printer::print_hex_array2(this->insns, this->insns_size);
-
+#endif
             seek_add += sizeof(u2) * this->insns_size;
 
 #ifdef _CODE_LIST_INFO
@@ -932,7 +932,7 @@ struct code_item
 
             // 3. parse handlers.
             encoded_catch_handler_list handler_list = encoded_catch_handler_list();
-            printf("parce handler list.\n");
+
             seek_add += handler_list.parse(dex_file, offset + seek_add);
         }
 

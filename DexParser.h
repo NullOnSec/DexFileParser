@@ -7,7 +7,7 @@
 class DexParser
 {
 public:
-    DexParser(char const* dex_file_path);
+    DexParser(char const* dex_file_path, bool verbose=false);
     ~DexParser();
     void parse();
 private:
@@ -44,6 +44,8 @@ private:
     type_id_item* type_list_;
     // 原型列表。
     proto_id_item* proto_list_;
+
+    bool verbose = false;
 };
 
 #endif // !DEX_PARSER_H

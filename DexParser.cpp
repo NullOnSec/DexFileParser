@@ -13,7 +13,7 @@ void DexParser::parse_header_item()
         printf("parse dex header error.\n");
     }
 
-    print_dex_header(&this->dex_header_);
+    if (verbose) print_dex_header(&this->dex_header_);
 }
 
 /*
@@ -61,7 +61,7 @@ void DexParser::parse_map_list()
     }
 
     this->map_list_ = map_list(t_size);
-    printf("map_list size: %u\n", this->map_list_.size);
+    if (verbose) printf("map_list size: %u\n", this->map_list_.size);
 
     // move to next map item offset.
     if (0 != _fseeki64(dex_file_, offset + sizeof(u4), 0))
@@ -92,8 +92,8 @@ void DexParser::parse_map_list()
 // */
 void DexParser::parse_string_list(const u4 size, const u4 offset)
 {
-    printf("string ids count: %u\n", size);
-    printf("string ids offset: %u\n", offset);
+    if (verbose) printf("string ids count: %u\n", size);
+    if (verbose) printf("string ids offset: %u\n", offset);
 
     if (size == 0)
     {
@@ -147,8 +147,8 @@ void DexParser::parse_type_ids(const u4 size, const u4 offset)
         return;
     }
 
-    printf("type_ids size: %u\n", type_ids_size);
-    printf("type_ids offset: %u\n", offset);
+    if (verbose) printf("type_ids size: %u\n", type_ids_size);
+    if (verbose) printf("type_ids offset: %u\n", offset);
 
     if (0 != fseek(this->dex_file_, offset, 0))
     {
@@ -176,8 +176,8 @@ void DexParser::parse_type_ids(const u4 size, const u4 offset)
 
 void DexParser::parse_proto_ids(const u4 size, const u4 offset)
 {
-    printf("proto ids size: %d\n", size);
-    printf("proto ids offset: %d\n\n", offset);
+    if (verbose) printf("proto ids size: %d\n", size);
+    if (verbose) printf("proto ids offset: %d\n\n", offset);
 
     if (0 != fseek(this->dex_file_, offset, 0))
     {
@@ -207,8 +207,8 @@ void DexParser::parse_proto_ids(const u4 size, const u4 offset)
 
 void DexParser::parse_field_ids(const u4 size, const u4 offset) const
 {
-    printf("field list size: %d\n", size);
-    printf("field list offset: %d\n\n", offset);
+    if (verbose) printf("field list size: %d\n", size);
+    if (verbose) printf("field list offset: %d\n\n", offset);
 
     if (0 != fseek(this->dex_file_, offset, 0))
     {
@@ -239,8 +239,8 @@ void DexParser::parse_field_ids(const u4 size, const u4 offset) const
 
 void DexParser::parse_method_ids(const u4 size, const u4 offset) const
 {
-    printf("method ids size: %d\n", size);
-    printf("method ids offset: %d\n\n", offset);
+    if (verbose) printf("method ids size: %d\n", size);
+    if (verbose) printf("method ids offset: %d\n\n", offset);
 
     if (0 != fseek(this->dex_file_, offset, 0))
     {
@@ -273,8 +273,8 @@ void DexParser::parse_method_ids(const u4 size, const u4 offset) const
 
 void DexParser::parse_class_defs(const u4 size, const u4 offset) const
 {
-    printf("class defs size: %u\n", size);
-    printf("class defs offset: %u\n\n", offset);
+    if (verbose) printf("class defs size: %u\n", size);
+    if (verbose) printf("class defs offset: %u\n\n", offset);
 
     if (0 != fseek(this->dex_file_, offset, 0))
     {
@@ -328,8 +328,8 @@ void DexParser::parse_encoded_method(const u4 offset, encoded_method* p) const
 
 void DexParser::parse_class_data_list(const u4 size, const u4 offset) const
 {
-    printf("class data list size: %u\n", size);
-    printf("class data list offset: %u\n", offset);
+    if (verbose) printf("class data list size: %u\n", size);
+    if (verbose) printf("class data list offset: %u\n", offset);
 
     if (0 != fseek(this->dex_file_, offset, 0))
     {
@@ -422,8 +422,8 @@ void DexParser::parse_class_data_list(const u4 size, const u4 offset) const
 
 void DexParser::parse_code_list(const u4 size, const u4 offset) const
 {
-    printf("code list size: %u\n", size);
-    printf("code list offset: %u\n", offset);
+    if (verbose) printf("code list size: %u\n", size);
+    if (verbose) printf("code list offset: %u\n", offset);
 
     code_item* code_list = new code_item[size];
 
@@ -482,20 +482,20 @@ proto_id_item DexParser::get_proto_item(const u4 index) const
 
 void DexParser::parse()
 {
-    printf(">>>>>>>>>>>> parse header_item <<<<<<<<<<<<\n\n");
+    if (verbose) printf(">>>>>>>>>>>> parse header_item <<<<<<<<<<<<\n\n");
     parse_header_item();
 
-    printf(">>>>>>>>>>>> parse map_list <<<<<<<<<<<<\n\n");
+    if (verbose) printf(">>>>>>>>>>>> parse map_list <<<<<<<<<<<<\n\n");
     parse_map_list();
 
     for (u4 i = 0; i < this->map_list_.size; i++)
     {
         const map_item item = map_list_.list[i];
-        printf("\n>>>>>>>>>>>> parse %s:\n\n", type_string(item.type));
+        if (verbose) printf("\n>>>>>>>>>>>> parse %s:\n\n", type_string(item.type));
 
         if (item.size == 0)
         {
-            printf("item is empty.\n");
+            if (verbose) printf("item is empty.\n");
             continue;
         }
 
@@ -520,13 +520,13 @@ void DexParser::parse()
             parse_class_defs(item.size, item.offset);
             break;
         case TYPE_MAP_LIST:
-            printf("ignore.\n");
+            if (verbose) printf("ignore.\n");
             break;
         case TYPE_TYPE_LIST:
-            printf("ignore.\n");
+            if (verbose) printf("ignore.\n");
             break;
         case TYPE_ANNOTATION_SET_ITEM:
-            printf("ignore.\n");
+            if (verbose) printf("ignore.\n");
             break;
         case TYPE_CLASS_DATA_ITEM:
             parse_class_data_list(item.size, item.offset);
@@ -535,7 +535,7 @@ void DexParser::parse()
             parse_code_list(item.size, item.offset);
             break;
         case TYPE_STRING_DATA_ITEM:
-            printf("ignore.\n");
+            if (verbose) printf("ignore.\n");
             break;
         case TYPE_DEBUG_INFO_ITEM:
             break;
@@ -546,12 +546,12 @@ void DexParser::parse()
         case TYPE_ANNOTATIONS_DIRECTORY_ITEM:
             break;
         default:
-            printf("item: %s\n", type_string(item.type));
+            if (verbose) printf("item: %s\n", type_string(item.type));
         }
     }
 }
 
-DexParser::DexParser(char const* dex_file_path)
+DexParser::DexParser(char const* dex_file_path, bool verbose)
 {
     this->dex_file_   = nullptr;
     this->dex_header_ = header_item();
@@ -562,11 +562,11 @@ DexParser::DexParser(char const* dex_file_path)
     this->type_list_ = nullptr;
     this->proto_list_ = nullptr;
 
-    printf("dex file: %s\n\n", dex_file_path);
+    if (verbose) printf("dex file: %s\n\n", dex_file_path);
     const auto s = fopen_s(&this->dex_file_, dex_file_path, "rb");
     if (s != 0 || this->dex_file_ == nullptr)
     {
-        printf("open dex file error: %s\n", dex_file_path);
+        if (verbose) printf("open dex file error: %s\n", dex_file_path);
     }
 }
 
